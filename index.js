@@ -27,6 +27,44 @@ async function run() {
         // Connect the client to the server	(optional starting in v4.7)
         await client.connect();
 
+
+        // DB COLLECTIONS
+        const carouselCollection = client.db('wristcharm').collection('carousels');
+        const categoryCollection = client.db('wristcharm').collection('categories');
+        const productCollection = client.db('wristcharm').collection('products');
+
+
+
+
+
+        // CAROUSEL DATA FROM DB TO CLIENT SIDE
+        app.get('/carousels', async (req, res) => {
+            const result = await carouselCollection.find().toArray();
+            res.send(result);
+        })
+
+        //CATEGORY DATA FORM DB TO CLIENT SIDE
+        app.get('/category', async (req, res) => {
+            const result = await categoryCollection.find().toArray();
+            res.send(result);
+        })
+
+        //PRODUCTS DATA FROM DB TO CLIENT SIDE
+        app.get('/products', async (req, res) => {
+            const result = await productCollection.find().toArray();
+            res.send(result);
+        })
+
+        //CATEGORY DATA ACCORDING TO CATEGORY NAME FORM DB TO CLENT SIDE
+        app.get('/categories/:category', async (req, res) => {
+            const category = req.params.category;
+            const result = await productCollection.find().toArray();
+            const newCategories = result.filter(ctg => ctg.category === category);
+            res.send(newCategories);
+
+        })
+
+
         app.get('/', (req, res) => {
             res.send('wristcharm is ticking');
         })

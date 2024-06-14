@@ -1,0 +1,28 @@
+[
+    {
+        "category": "Mechanical-Watches",
+        "category_img": "https://i.ibb.co/cTPZhZd/category-mechanical.jpg"
+    },
+    {
+        "category": "Quartz-Watches",
+        "category_img": "https://i.ibb.co/jvcxzDg/category-quartz.jpg"
+    },
+    {
+        "category": "Digital-Watches",
+        "category_img": "https://i.ibb.co/Ry5v4Pn/category-digital.jpg"
+    },
+    {
+        "category": "Automatic-Watches",
+        "category_img": "https://i.ibb.co/nm6VctS/category-automatic.jpg"
+    },
+    {
+        "category": "Analog-Watches",
+        "category_img": "https://i.ibb.co/Q6hth5g/category-analog.jpg"
+    },
+    {
+        "category": "Solar-Watches",
+        "category_img": "https://i.ibb.co/1ZnZX3q/category-solar.jpg"
+    }
+]
+
+
