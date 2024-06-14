@@ -32,6 +32,7 @@ async function run() {
         const carouselCollection = client.db('wristcharm').collection('carousels');
         const categoryCollection = client.db('wristcharm').collection('categories');
         const productCollection = client.db('wristcharm').collection('products');
+        const userCollection = client.db('wristcharm').collection('users');
 
 
 
@@ -63,6 +64,28 @@ async function run() {
             res.send(newCategories);
 
         })
+
+
+
+
+        // -------------------
+        // USER related API
+        // -------------------
+
+        // inserting user info to DB
+        app.post('/users', async (req, res) => {
+            const user = req.body;
+            // inserted user's email if it doesn't exist to DB
+            const query = { email: user.email };
+            const existingUser = await userCollection.findOne(query);
+            if (existingUser) {
+                return res.send({ message: 'user already exists', insertedId: null })
+            }
+            const result = await userCollection.insertOne(user);
+            res.send(result);
+        })
+
+
 
 
         app.get('/', (req, res) => {
