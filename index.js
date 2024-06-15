@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const cors = require('cors');
 require('dotenv').config();
 port = process.env.PORT || 5000;
@@ -33,6 +33,7 @@ async function run() {
         const categoryCollection = client.db('wristcharm').collection('categories');
         const productCollection = client.db('wristcharm').collection('products');
         const userCollection = client.db('wristcharm').collection('users');
+        const cartCollection = client.db('wristcharm').collection('carts');
 
 
 
@@ -72,6 +73,28 @@ async function run() {
         // USER related API
         // -------------------
 
+        //FOR HAVING ALL THE USER DATA FROM DB
+        app.get('/users', async (req, res) => {
+            const result = await userCollection.find().toArray();
+            res.send(result);
+        })
+
+        // FOR HAVING ADMIN DATA WITH ACCORDING TO EMAIL
+        app.get('/users/admin/:email', async (req, res) => {
+            const email = req.params.email;
+            if (email !== req.decoded.email) {
+                return res.status(403).send({ message: 'unauthorized access' })
+            }
+            const query = { email: email };
+            const user = await userCollection.findOne(query);
+            if (user) {
+                admin = user?.role === 'admin'
+            }
+            res.send({ admin })
+
+        })
+
+
         // inserting user info to DB
         app.post('/users', async (req, res) => {
             const user = req.body;
@@ -82,6 +105,58 @@ async function run() {
                 return res.send({ message: 'user already exists', insertedId: null })
             }
             const result = await userCollection.insertOne(user);
+            res.send(result);
+        })
+
+
+        // UPDATING DATA MAKE ADMIN OF AN USER FROM DB
+        app.patch('/users/admin/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: new ObjectId(id) }
+            const updatedDoc = {
+                $set: {
+                    role: 'admin'
+                }
+            }
+            const result = await userCollection.updateOne(filter, updatedDoc);
+            res.send(result);
+        })
+
+        // DELETING USER DATA FROM DB
+        app.delete('/users/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) };
+            const result = await userCollection.deleteOne(query);
+            res.send(result);
+        })
+
+
+
+         // -------------------------
+        // cart related API
+        // -------------------------
+
+        // GETTING PRODUCT DATA ACCORDING TO USER EMAIL
+        app.get('/carts', async (req, res) => {
+            const email = req.query.email;
+            const query = { email: email };
+            const result = await cartCollection.find(query).toArray();
+            res.send(result);
+        })
+
+
+        //ITEM ADDED TO THE CART COLLECTION
+        app.post('/carts', async (req, res) => {
+            const cartItem = req.body;
+            const result = await cartCollection.insertOne(cartItem);
+            res.send(result);
+        })
+
+        // DELETING CART ITEM FROM DB
+        app.delete('/carts/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) };
+            const result = await cartCollection.deleteOne(query);
             res.send(result);
         })
 
